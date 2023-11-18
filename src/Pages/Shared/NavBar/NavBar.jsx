@@ -6,6 +6,12 @@ const NavBar = () => {
     const  {user,signOutUser} = useContext(AuthContext)
     const handleSignOut = () => {
       signOutUser()
+      .then(result=>{
+        console.log(result.user)
+      })
+      .catch(error=>{
+        console.log(error.message)
+      })
     }
     const navItems = <>
     <li><Link to='/'>Home</Link></li>

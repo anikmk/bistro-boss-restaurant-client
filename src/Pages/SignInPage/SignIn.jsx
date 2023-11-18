@@ -1,11 +1,16 @@
-import { useContext, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
 import { AuthContext } from "../../Provider/AuthProvider";
 import { Helmet } from "react-helmet-async";
+import Swal from "sweetalert2";
 
 const SignIn = () => {
+  const [disable,setDisable] = useState(true)
     const {signInUser} = useContext(AuthContext)
+    const navigate = useNavigate();
+    const location = useLocation();
+    const from = location.state?.from?.pathname || "/"
           useEffect(()=>{
               loadCaptchaEnginge(6); 
           },[])
@@ -20,12 +25,39 @@ const SignIn = () => {
         signInUser(email,password)
         .then(result=>{
           console.log(result.user)
+          Swal.fire({
+            title: "User SignUp Successfully",
+            showClass: {
+              popup: `
+                animate__animated
+                animate__fadeInUp
+                animate__faster
+              `
+            },
+            hideClass: {
+              popup: `
+                animate__animated
+                animate__fadeOutDown
+                animate__faster
+              `
+            }
+          });
+          navigate(from,{replace: true});
         })
         .catch(error=>{
           console.log(error.message)
         })
 
 
+    }
+    const handleValidedCaptcha = (e) => {
+        const user_captcha_value = e.target.value;
+        if(validateCaptcha(user_captcha_value)){
+          setDisable(false)
+        }
+        else {
+          setDisable(true)
+        }
     }
    
   return (
@@ -75,6 +107,7 @@ const SignIn = () => {
               </label>
               <input
                 type="text"
+                onBlur={handleValidedCaptcha}
                 name="chaptcha"
                 placeholder="type chaptcha"
                 className="input input-bordered"
@@ -82,7 +115,7 @@ const SignIn = () => {
               />
             </div>
             <div className="form-control mt-6">
-              <input type="submit" className="btn btn-primary" value='Sign IN'/>
+              <input disabled={disable} type="submit" className="btn btn-primary" value='Sign IN'/>
             </div>
           </form>
           <p className="text-center pb-4 text-lg">do not have an account <Link to='/signup' className="text-blue-600">Sign Up</Link> </p>
