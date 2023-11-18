@@ -4,8 +4,8 @@ const NavBar = () => {
     const navItems = <>
     <li><Link to='/'>Home</Link></li>
     <li><Link to='/menu'>Menu</Link></li>
-    <li><Link>home</Link></li>
-    <li><Link>home</Link></li>
+    <li><Link to='/signin'>login</Link></li>
+    <li><Link to='/order'>Order</Link></li>
     </>
   return (
     <div className="navbar fixed z-10 bg-black px-20 bg-opacity-30 text-white">
