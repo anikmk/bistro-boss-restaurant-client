@@ -1,6 +1,14 @@
+import { useContext, useEffect } from "react";
 import { Link } from "react-router-dom";
+import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-simple-captcha';
+import { AuthContext } from "../../Provider/AuthProvider";
 
 const SignIn = () => {
+    const {signInUser} = useContext(AuthContext)
+          useEffect(()=>{
+              loadCaptchaEnginge(6); 
+          },[])
+
     const handleSignIn = (event) => {
         event.preventDefault();
         const form = event.target;
@@ -8,8 +16,17 @@ const SignIn = () => {
         const password = form.password.value;
         const userInfo = {email,password}
         console.log(userInfo)
+        signInUser(email,password)
+        .then(result=>{
+          console.log(result.user)
+        })
+        .catch(error=>{
+          console.log(error.message)
+        })
+
 
     }
+   
   return (
     <div className="hero min-h-screen bg-base-200">
       <div className="hero-content flex">
@@ -47,8 +64,20 @@ const SignIn = () => {
                 required
               />
             </div>
+            <div className="form-control">
+              <label className="label">
+              <LoadCanvasTemplate />
+              </label>
+              <input
+                type="text"
+                name="chaptcha"
+                placeholder="type chaptcha"
+                className="input input-bordered"
+                required
+              />
+            </div>
             <div className="form-control mt-6">
-              <button className="btn btn-primary">Login</button>
+              <input type="submit" className="btn btn-primary" value='Sign IN'/>
             </div>
           </form>
           <p className="text-center pb-4 text-lg">do not have an account <Link to='/signup' className="text-blue-600">Sign Up</Link> </p>
