@@ -39,7 +39,7 @@ export const router = createBrowserRouter([
     },
     {
         path:'dashboard',
-        element:<DashBoard></DashBoard>,
+        element:<PrivetRoute><DashBoard></DashBoard></PrivetRoute>,
         children:[
             {
                 path:'cart',

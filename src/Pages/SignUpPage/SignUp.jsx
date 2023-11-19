@@ -4,9 +4,11 @@ import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../Provider/AuthProvider";
 import Swal from "sweetalert2";
+import useAxiosPublic from "../../hooks/useAxiosPublic";
 
 const SignUp = () => {
-  const {register,handleSubmit, reset, watch,formState: { errors } } = useForm();
+    const axiosPublic = useAxiosPublic();
+  const {register,handleSubmit, reset, formState: { errors } } = useForm();
   const {createUser,updateUserProfile} = useContext(AuthContext);
   const navigate = useNavigate();
 
@@ -15,21 +17,34 @@ const SignUp = () => {
     .then(result=>{
       console.log(result.user)
       updateUserProfile(data.name,data.photoURL)
-      .then(()=>{console.log('user profile info updated')})
-      reset();
-      Swal.fire({
-        title: "Good job!",
-        text: "User Created Successfully",
-        icon: "success"
-      });
-      navigate('/');
+      .then(()=>{
+        // create user entry in the database
+        const userInfo = {
+          name: data.name,
+          email: data.email
+        }
+        axiosPublic.post('/users',userInfo)
+        .then(res=>{
+          if(res.data.insertedId){
+            console.log('user added ',res.data)
+            reset();
+            Swal.fire({
+              title: "Good job!",
+              text: "User Created Successfully",
+              icon: "success"
+            });
+            navigate('/');
+          }
+        })
+       
     })
     .catch(error=>{
       console.log(error.message)
     })
-  }
+  })
+}
 
-  console.log(watch("example")) 
+  // console.log(watch("example")) 
   return (
    <>
    <Helmet>
