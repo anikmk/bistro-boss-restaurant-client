@@ -4,6 +4,7 @@ import { loadCaptchaEnginge, LoadCanvasTemplate, validateCaptcha } from 'react-s
 import { AuthContext } from "../../Provider/AuthProvider";
 import { Helmet } from "react-helmet-async";
 import Swal from "sweetalert2";
+import SocialLogin from "../../Componnents/SocialLogin/SocialLogin";
 
 const SignIn = () => {
   const [disable,setDisable] = useState(true)
@@ -119,6 +120,7 @@ const SignIn = () => {
             </div>
           </form>
           <p className="text-center pb-4 text-lg">do not have an account <Link to='/signup' className="text-blue-600">Sign Up</Link> </p>
+          <SocialLogin></SocialLogin>
         </div>
       </div>
     </div>
