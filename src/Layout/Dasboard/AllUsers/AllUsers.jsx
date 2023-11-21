@@ -12,7 +12,17 @@ const AllUsers = () => {
             const res = await axiosSecure.get('/users');
             return res.data;
         }
-    })  
+    })
+        const handleMakeAdmin = (user) => {
+            axiosSecure.patch(`/users/admin/${user._id}`)
+            .then(res=>{
+                console.log(res.data)
+                if(res.data.modifiedCount > 0){
+                    refetch();
+                    alert(`${user.name} now you are a admin!`)
+                }
+            })
+        }  
         const handleDeleteUser = (user) => {
             Swal.fire({
                 title: "Are you sure?",
@@ -52,7 +62,7 @@ const AllUsers = () => {
         <th>Count</th>
         <th>Name</th>
         <th>Email</th>
-        <th>Roll</th>
+        <th>Role</th>
         <th>Action</th>
       </tr>
     </thead>
@@ -64,7 +74,11 @@ const AllUsers = () => {
             <th> {user.name} </th>
             <td> {user.email} </td>
             <td>
-                <button onClick={()=>handleDeleteUser(user)} className="btn bg-black"> <FaUser className="text-white"></FaUser> </button>  
+                {
+                    user.role === 'admin' ? 'admin' :
+                    <button onClick={()=>handleMakeAdmin(user)} className="btn bg-black"> <FaUser className="text-white"></FaUser> </button>
+                }
+                  
             </td>
 
             <td>
