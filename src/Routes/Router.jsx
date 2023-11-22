@@ -9,6 +9,8 @@ import PrivetRoute from "./PrivetRoute";
 import DashBoard from "../Layout/Dasboard/DashBoard";
 import Cart from "../Pages/DashBoard/Cart/Cart";
 import AllUsers from "../Layout/Dasboard/AllUsers/AllUsers";
+import AddItems from "../Layout/Dasboard/AddItems/AddItems";
+import AdminRoute from "./AdminRoute";
 
 
 export const router = createBrowserRouter([
@@ -42,14 +44,19 @@ export const router = createBrowserRouter([
         path:'dashboard',
         element:<PrivetRoute><DashBoard></DashBoard></PrivetRoute>,
         children:[
+            // normal user route 
             {
                 path:'cart',
                 element:<Cart></Cart>
             },
             // admin routes
             {
+                path:'addItems',
+                element:<AdminRoute><AddItems></AddItems></AdminRoute>
+            },
+            {
                 path:'users',
-                element:<AllUsers></AllUsers>
+                element:<AdminRoute><AllUsers></AllUsers></AdminRoute>
             }
         ]
     }
