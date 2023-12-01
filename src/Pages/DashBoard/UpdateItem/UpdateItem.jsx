@@ -41,7 +41,7 @@ const UpdateItem = () => {
         <div>
             <SectionTitle Heading='update an item' subHadding='refresh info'></SectionTitle>
 
-            <div>
+        <div>
         <form onSubmit={handleSubmit(onSubmit)}>
           <div className="form-control w-full">
             <label className="label">
