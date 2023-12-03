@@ -4,24 +4,30 @@ import { useState } from "react";
 import useAxiosSecure from "../../../hooks/useAxiosSecure";
 import useCart from "../../../hooks/useCart";
 import useAuth from "../../../hooks/useAuth";
+import Swal from "sweetalert2";
+import { useNavigate } from "react-router-dom";
 
 
 const CheckOutForm = () => {
     const {user} = useAuth();
     const axiosSecure = useAxiosSecure();
-    const [cart] = useCart();
+    const [cart,refetch] = useCart();
     const totalPrice = cart.reduce((total,item)=>total + item.price,0);
     const [error ,setError] = useState();
     const [clientSecrett,setClinetSecret] = useState('')
     const [tranjectionId,setTranjectionId] = useState('')
     const stripe = useStripe();
     const elements = useElements();
+    const navigate = useNavigate();
+
     useEffect(()=>{
-        axiosSecure.post('/create-payment-intent',{price:totalPrice})
+       if(totalPrice > 0){
+         axiosSecure.post('/create-payment-intent',{price:totalPrice})
         .then(res=>{
             console.log(res.data.clientSecret);
             setClinetSecret(res.data.clientSecret);
         })
+       }
     },[axiosSecure,totalPrice])
     const handleSubmit = async(e) => {
         e.preventDefault();
@@ -57,13 +63,35 @@ const CheckOutForm = () => {
             }
         })
         if(confirmError){
-            console.log('confirm error')
+            console.log('confirm error', confirmError)
         }
         else{
             console.log(paymentIntent,'succes payment')
             if(paymentIntent.status == 'succeeded'){
                 setTranjectionId(paymentIntent)
                 console.log('tranjection id',paymentIntent.id)
+
+                // now save the payment in the database
+                const payment = {
+                    email: user.email,
+                    price:totalPrice,
+                    date: new Date(),
+                    transectionId:paymentIntent.id,
+                    cartIds:cart.map(item=>item._id),
+                    menuItemId:cart.map(item=>item.menuId),
+                    status:'pending'
+                }
+                const res = await axiosSecure.post('/payments',payment)
+                console.log('payment save',res.data);
+                refetch();
+                if(res.data?.paymentResult.insertedId){
+                    Swal.fire({
+                        title: "inserted!",
+                        text: "Your payment has been success",
+                        icon: "success"
+                    });
+                    navigate('/dashboard/paymentHistory')
+                }
             }
         }
 
